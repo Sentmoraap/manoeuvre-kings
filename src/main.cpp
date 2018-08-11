@@ -50,7 +50,8 @@ int main(int argc, char **argv)
     levels[0].addWall(175, 384, 350, 768);
     levels[0].addWall(849, 384, 350, 768);
     levels[0].addWall(512, 384, 16, 256);
-    levels[0].addVehicle(car, 400, 250, M_PI / 2);
+    levels[0].addVehicle(car, 390, 240, M_PI / 2);
+    levels[0].addTarget(644, 240);
     currentLevel = &levels[0];
 
     resetLevel();
@@ -73,17 +74,19 @@ int main(int argc, char **argv)
             currentTime += 1000000;
             currentVehicle.update(1. / FRAME_RATE, *currentLevel);
             int8_t newSpeedSign = currentVehicle.getSpeedSign();
-            if(newSpeedSign)
+            if(newSpeedSign && currentVehicle.hasTargets())
             {
                 counting = true;
                 if(newSpeedSign != currentSpeedSign) nbManoeuvres++;
                 currentSpeedSign = newSpeedSign;
             }
+            counting &= currentVehicle.hasTargets();
             if(counting) levelTime++;
         }
 
         // Draw
         window.clear(sf::Color(64,64,64,0));
+        currentVehicle.drawTargets(window);
         currentVehicle.draw(window);
         currentLevel->draw(window);
 
@@ -102,7 +105,7 @@ int main(int argc, char **argv)
         text.setPosition(10, 42);
         window.draw(text);
         ss.str("");
-        ss << "Compound: ";
+        ss << "Product: ";
         formatTime(ss, levelTime * nbManoeuvres);
         text.setString(ss.str());
         text.setPosition(10, 74);

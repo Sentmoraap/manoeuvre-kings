@@ -19,11 +19,10 @@ class Level
     private:
         std::vector<Wall> walls;
         std::vector<Vehicle> vehicles;
-        static float dot(sf::Vector2f a, sf::Vector2f b);
-        static bool overlap(float aMin, float aMax, float bMin, float bMax);
     public:
         void addWall(int16_t posX, int16_t posY, uint16_t width, uint16_t length, float angle = 0);
         void addVehicle(const Vehicle &vehicle, double posX, double posY, double angle);
+        void addTarget(int16_t posX, int16_t posY);
         const std::vector<Vehicle> &getVehicles() const;
         void draw(sf::RenderWindow &window) const;
         bool checkSat(sf::FloatRect rect, sf::Vector2f center, float angle) const;
