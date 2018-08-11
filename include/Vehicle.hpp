@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 #include <SFML/Graphics.hpp>
 #define _USE_MATH_DEFINES
@@ -21,6 +23,8 @@ class Vehicle
         double turnSpeedBase = 0.02;
         double maxTurnSpeed = 1;
     public:
+        void setPosAndAngle(double posX, double posY, float angle);
         void update(double dt);
-        void draw(sf::RenderWindow &window);
+        int8_t getSpeedSign() const;
+        void draw(sf::RenderWindow &window) const;
 };

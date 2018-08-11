@@ -1,6 +1,14 @@
 #include "Vehicle.hpp"
 #include <iostream>
 
+void Vehicle::setPosAndAngle(double posX, double posY, float angle)
+{
+    speed = 0;
+    this->posX = posX;
+    this->posY = posY;
+    this->angle = angle;
+}
+
 void Vehicle::update(double dt)
 {
     int8_t accelInput = sf::Keyboard::isKeyPressed(sf::Keyboard::Up) - sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
@@ -35,7 +43,12 @@ void Vehicle::update(double dt)
     //std::cout << posY << " " << speed << std::endl;
 }
 
-void Vehicle::draw(sf::RenderWindow &window)
+int8_t Vehicle::getSpeedSign() const
+{
+    return speed == 0 ? 0 : speed > 0 ? 1 : -1;
+}
+
+void Vehicle::draw(sf::RenderWindow &window) const
 {
     sf::RectangleShape rect(sf::Vector2f(length, width));
     rect.setOutlineColor(sf::Color::White);
