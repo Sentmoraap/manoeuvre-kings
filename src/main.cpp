@@ -71,7 +71,7 @@ int main(int argc, char **argv)
         while(newTime > currentTime)
         {
             currentTime += 1000000;
-            currentVehicle.update(1. / FRAME_RATE);
+            currentVehicle.update(1. / FRAME_RATE, *currentLevel);
             int8_t newSpeedSign = currentVehicle.getSpeedSign();
             if(newSpeedSign)
             {

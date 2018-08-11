@@ -1,5 +1,5 @@
 #include "Vehicle.hpp"
-#include <iostream>
+#include "Level.hpp"
 
 void Vehicle::setPosAndAngle(double posX, double posY, float angle)
 {
@@ -9,7 +9,7 @@ void Vehicle::setPosAndAngle(double posX, double posY, float angle)
     this->angle = angle;
 }
 
-void Vehicle::update(double dt)
+void Vehicle::update(double dt, const Level &level)
 {
     int8_t accelInput = sf::Keyboard::isKeyPressed(sf::Keyboard::Up) - sf::Keyboard::isKeyPressed(sf::Keyboard::Down);
     if(accelInput)
@@ -37,10 +37,18 @@ void Vehicle::update(double dt)
         }
     }
     int8_t turnInput = sf::Keyboard::isKeyPressed(sf::Keyboard::Right) - sf::Keyboard::isKeyPressed(sf::Keyboard::Left);
-    angle += turnInput * std::min(fabs(speed) * turnSpeedBase, maxTurnSpeed) * dt;
-    posX += speed * dt * cos(angle);
-    posY += speed * dt * sin(angle);
-    //std::cout << posY << " " << speed << std::endl;
+    double newAngle = angle + turnInput * std::min(fabs(speed) * turnSpeedBase, maxTurnSpeed) * dt * getSpeedSign();
+    double newPosX = posX + speed * dt * cos(angle);
+    double newPosY = posY + speed * dt * sin(angle);
+    if(level.checkSat(sf::FloatRect(sf::Vector2f(newPosX, newPosY), sf::Vector2f(length, width)),
+        sf::Vector2f(turnAxisPos, width / 2), newAngle))
+            speed = 0;
+    else
+    {
+        angle = newAngle;
+        posX = newPosX;
+        posY = newPosY;
+    }
 }
 
 int8_t Vehicle::getSpeedSign() const
@@ -52,7 +60,7 @@ void Vehicle::draw(sf::RenderWindow &window) const
 {
     sf::RectangleShape rect(sf::Vector2f(length, width));
     rect.setOutlineColor(sf::Color::White);
-    rect.setOutlineThickness(OUTLINE_WIDTH);
+    rect.setOutlineThickness(-OUTLINE_WIDTH);
     rect.setFillColor(sf::Color::Green);
     rect.setPosition(posX, posY);
     rect.setOrigin(turnAxisPos, width / 2);

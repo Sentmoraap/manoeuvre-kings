@@ -5,12 +5,14 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+class Level;
+
 class Vehicle
 {
     private:
         static constexpr uint8_t OUTLINE_WIDTH = 5;
         uint16_t width = 30;
-        uint16_t length = 65;
+        uint16_t length = 60;
         uint16_t turnAxisPos = 7;
         double posX = 540;
         double posY = 390;
@@ -24,7 +26,7 @@ class Vehicle
         double maxTurnSpeed = 1;
     public:
         void setPosAndAngle(double posX, double posY, float angle);
-        void update(double dt);
+        void update(double dt, const Level &level);
         int8_t getSpeedSign() const;
         void draw(sf::RenderWindow &window) const;
 };
