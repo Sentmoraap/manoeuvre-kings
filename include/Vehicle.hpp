@@ -45,16 +45,17 @@ class Vehicle
         sf::Sound targetSound;
 
     public:
+        Vehicle();
         Vehicle(uint16_t length, uint16_t turnAxisPos);
         Vehicle(const Vehicle &) = default;
         Vehicle(Vehicle &&) = default;
         Vehicle& operator=(const Vehicle &) = default;
         void setPosAndAngle(double posX, double posY, float angle);
         void addTarget(int16_t posX, int16_t posY);
-        void update(double dt, const Level &level);
+        void update(double dt, bool current, const Level &level, const std::vector<Vehicle> &vehicles);
         int8_t getSpeedSign() const;
         bool hasTargets() const;
         void setPlaySounds(bool playSounds);
-        void draw(sf::RenderWindow &window) const;
-        void drawTargets(sf::RenderWindow &window) const;
+        void draw(sf::RenderWindow &window, bool current, sf::Color color) const;
+        void drawTargets(sf::RenderWindow &window, sf::Color color) const;
 };

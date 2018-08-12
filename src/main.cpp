@@ -12,7 +12,8 @@ static constexpr uint16_t FRAME_RATE = 240;
 
 std::vector<Level> levels;
 Level* currentLevel;
-Vehicle currentVehicle(0, 0);
+std::vector<Vehicle> vehicles;
+uint8_t currentVehicle = 0;
 uint32_t levelTime;
 uint16_t nbManoeuvres;
 uint8_t currentLevelNb = 0;
@@ -21,11 +22,13 @@ bool counting = false;
 
 void resetLevel()
 {
-    currentVehicle = currentLevel->getVehicles()[0];
-    currentVehicle.setPlaySounds(true);
+    vehicles = currentLevel->getVehicles();
+    currentVehicle = 0;
+    for(Vehicle &v : vehicles) v.setPlaySounds(true);
     levelTime = 0;
     nbManoeuvres = 0;
     currentSpeedSign = 0;
+    counting = false;
 }
 
 void changeLevel(int8_t delta)
@@ -134,9 +137,25 @@ int main(int argc, char **argv)
     levels.back().addWall(512, 704, 1024, 128);
     levels.back().addTarget(540, 608);
 
+    levels.push_back(Level("Congested"));
+    levels.back().addWall(241, 177, 482, 354);
+    levels.back().addWall(783, 177, 482, 354);
+    levels.back().addWall(128, 384, 256, 768);
+    levels.back().addWall(896, 384, 256, 768);
+    levels.back().addWall(512, 64, 1024, 128);
+    levels.back().addWall(512, 591, 1024, 354);
+
+    levels.back().addVehicle(car, 512, 192, M_PI / 2);
+    levels.back().addTarget(288, 384);
+    levels.back().addVehicle(car, 320, 384, 0);
+    levels.back().addTarget(736, 384);
+    levels.back().addVehicle(car, 704, 384, M_PI);
+    levels.back().addTarget(512, 160);
 
     currentLevel = &levels[0];
     resetLevel();
+
+    sf::Color vehicleColors[3] = {sf::Color::Green, sf::Color::Blue, sf::Color::Red};
 
     // Main loop
     while(window.isOpen())
@@ -175,22 +194,36 @@ int main(int argc, char **argv)
         while(newTime > currentTime)
         {
             currentTime += 1000000;
-            currentVehicle.update(1. / FRAME_RATE, *currentLevel);
-            int8_t newSpeedSign = currentVehicle.getSpeedSign();
-            if(newSpeedSign && currentVehicle.hasTargets())
+            for(uint8_t i = 0; i < vehicles.size(); i++)
+                if(sf::Keyboard::isKeyPressed(static_cast<sf::Keyboard::Key>(sf::Keyboard::Key::Num1 + i)))
             {
-                counting = true;
-                if(newSpeedSign != currentSpeedSign) nbManoeuvres++;
-                currentSpeedSign = newSpeedSign;
+                currentVehicle = i;
+                currentSpeedSign = vehicles[currentVehicle].getSpeedSign();
             }
-            counting &= currentVehicle.hasTargets();
+            bool targetsRemaining = false;
+            for(uint8_t i = 0; i < vehicles.size(); i++)
+            {
+                vehicles[i].update(1. / FRAME_RATE, i == currentVehicle, *currentLevel, vehicles);
+                targetsRemaining |= vehicles[i].hasTargets();
+            }
+            if(targetsRemaining)
+            {
+                int8_t newSpeedSign = vehicles[currentVehicle].getSpeedSign();
+                if(newSpeedSign)
+                {
+                    counting = true;
+                    if(newSpeedSign != currentSpeedSign) nbManoeuvres++;
+                    currentSpeedSign = newSpeedSign;
+                }
+            }
+            else counting = false;
             if(counting) levelTime++;
         }
 
         // Draw
         window.clear(sf::Color(64,64,64,0));
-        currentVehicle.drawTargets(window);
-        currentVehicle.draw(window);
+        for(uint8_t i = 0; i < vehicles.size(); i++) vehicles[i].drawTargets(window, vehicleColors[i]);
+        for(uint8_t i = 0; i < vehicles.size(); i++) vehicles[i].draw(window, i == currentVehicle, vehicleColors[i]);
         currentLevel->draw(window);
 
         // Texts

@@ -28,6 +28,6 @@ class Level
         void addTarget(int16_t posX, int16_t posY);
         const std::vector<Vehicle> &getVehicles() const;
         void draw(sf::RenderWindow &window) const;
-        bool checkSat(sf::FloatRect rect, sf::Vector2f center, float angle) const;
+        bool checkSat(sf::Vector2f center, sf::Vector2f size, float rot) const;
         const std::string &getName();
 };
