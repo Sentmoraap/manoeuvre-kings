@@ -28,8 +28,8 @@ class Vehicle
         double speed = 0;
         float speedPitchMult = 0.01;
         float minPitch = 0.5, maxPitch = 2;
-        float speedVolumeMult = 1;
-        float minVolume = 25, maxVolume = 100;
+        float speedVolumeMult = 0.5;
+        float minVolume = 12, maxVolume = 50;
         float minSpeedHitSound = 10;
         double angle = -M_PI / 2;
         double accelerationBase = 10000;

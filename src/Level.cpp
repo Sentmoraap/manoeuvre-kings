@@ -7,6 +7,8 @@ Wall::Wall() {}
 Wall::Wall(int16_t posX, int16_t posY, uint16_t width, uint16_t height, float angle)
  : posX(posX), posY(posY), width(width), height(height), angle(angle) {}
 
+Level::Level(const char* name) : name(name) {}
+
 void Level::addWall(int16_t posX, int16_t posY, uint16_t width, uint16_t height, float angle)
 {
     walls.emplace_back(posX, posY, width, height, angle);
@@ -106,4 +108,9 @@ bool Level::checkSat(sf::FloatRect rect, sf::Vector2f center, float angle) const
         if(Utils::overlap(-a3Diff, a3Diff, min, max)) return true;
     }
     return false;
+}
+
+const std::string &Level::getName()
+{
+    return name;
 }

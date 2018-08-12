@@ -15,6 +15,7 @@ Level* currentLevel;
 Vehicle currentVehicle;
 uint32_t levelTime;
 uint16_t nbManoeuvres;
+uint8_t currentLevelNb = 0;
 int8_t currentSpeedSign;
 bool counting = false;
 
@@ -25,6 +26,13 @@ void resetLevel()
     levelTime = 0;
     nbManoeuvres = 0;
     currentSpeedSign = 0;
+}
+
+void changeLevel(int8_t delta)
+{
+    currentLevelNb = (currentLevelNb + delta + levels.size()) % levels.size();
+    currentLevel = &levels[currentLevelNb];
+    resetLevel();
 }
 
 void formatTime(std::stringstream &ss, uint32_t time)
@@ -45,19 +53,64 @@ int main(int argc, char **argv)
     font.loadFromFile("assets/sansation_regular.ttf");
     Sounds::loadSounds();
     uint64_t currentTime = clock.getElapsedTime().asMicroseconds() * FRAME_RATE;
-    levels.push_back(Level());
     Vehicle car;
-    levels[0].addWall(512, 0, 448, 448, M_PI / 4);
-    levels[0].addWall(256, 768, 512, 512, M_PI / 4);
-    levels[0].addWall(768, 768, 512, 512, M_PI / 4);
-    levels[0].addWall(175, 384, 350, 768);
-    levels[0].addWall(849, 384, 350, 768);
-    levels[0].addWall(512, 384, 16, 256);
-    levels[0].addVehicle(car, 390, 240, M_PI / 2);
-    levels[0].addTarget(644, 240);
-    currentLevel = &levels[0];
 
+
+    // Levels
+    levels.push_back(Level("Shoshinsha"));
+    levels.back().addWall(512, 0, 448, 448, M_PI / 4);
+    levels.back().addWall(256, 768, 512, 512, M_PI / 4);
+    levels.back().addWall(768, 768, 512, 512, M_PI / 4);
+    levels.back().addWall(175, 384, 350, 768);
+    levels.back().addWall(849, 384, 350, 768);
+    levels.back().addWall(512, 384, 16, 256);
+    levels.back().addVehicle(car, 390, 240, M_PI / 2);
+    levels.back().addTarget(644, 240);
+
+    levels.push_back(Level("Cross"));
+    levels.back().addWall(241, 177, 482, 354);
+    levels.back().addWall(783, 177, 482, 354);
+    levels.back().addWall(241, 591, 482, 354);
+    levels.back().addWall(783, 591, 482, 354);
+    levels.back().addWall(128, 384, 256, 768);
+    levels.back().addWall(896, 384, 256, 768);
+    levels.back().addWall(512, 64, 1024, 128);
+    levels.back().addWall(512, 704, 1024, 128);
+    levels.back().addVehicle(car, 512, 576, -M_PI / 2);
+    levels.back().addTarget(512, 192);
+    levels.back().addTarget(320, 384);
+    levels.back().addTarget(704, 384);
+
+    levels.push_back(Level("Bay parking"));
+    levels.back().addVehicle(car, 337, 384, 0);
+    for(uint16_t x = 337; x <= 687; x += 50) for(uint16_t y = 289; y <= 479; y += 190)
+        levels.back().addWall(x, y, 10, 70);
+    levels.back().addWall(146, 384, 292, 768);
+    levels.back().addWall(878, 384, 292, 768);
+    levels.back().addWall(512, 127, 1024, 254);
+    levels.back().addWall(512, 641, 1024, 254);
+    levels.back().addTarget(462, 489);
+    levels.back().addTarget(512, 489);
+    levels.back().addTarget(662, 489);
+    levels.back().addTarget(712, 289);
+
+    levels.push_back(Level("Diagonal parking"));
+    levels.back().addVehicle(car, 337, 384, 0);
+    for(uint16_t x = 337; x <= 687; x += 56) for(uint16_t y = 297; y <= 471; y += 174)
+        levels.back().addWall(x, y, 10, 70, y == 297 ? M_PI / 6 : -M_PI / 6);
+    levels.back().addWall(146, 384, 292, 768);
+    levels.back().addWall(878, 384, 292, 768);
+    levels.back().addWall(512, 135, 1024, 270);
+    levels.back().addWall(512, 633, 1024, 270);
+    levels.back().addTarget(482, 479);
+    levels.back().addTarget(532, 299);
+    levels.back().addTarget(594, 479);
+    levels.back().addTarget(706, 479);
+
+    currentLevel = &levels[0];
     resetLevel();
+
+    // Main loop
     while(window.isOpen())
     {
         // Handle events
@@ -66,9 +119,28 @@ int main(int argc, char **argv)
         {
             if(event.type == sf::Event::Closed)
                 window.close();
+            if(event.type == sf::Event::KeyPressed)
+            {
+                switch(event.key.code)
+                {
+                    case sf::Keyboard::Escape:
+                        window.close();
+                        break;
+                    case sf::Keyboard::R:
+                        resetLevel();
+                        break;
+                    case sf::Keyboard::N:
+                        changeLevel(1);
+                        break;
+                    case sf::Keyboard::P:
+                        changeLevel(-1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
         }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) window.close();
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::R)) resetLevel();
 
         // Update
         uint64_t newTime = clock.getElapsedTime().asMicroseconds() * FRAME_RATE;
@@ -112,6 +184,9 @@ int main(int argc, char **argv)
         formatTime(ss, levelTime * nbManoeuvres);
         text.setString(ss.str());
         text.setPosition(10, 74);
+        window.draw(text);
+        text.setString(currentLevel->getName());
+        text.setPosition(512 - text.getLocalBounds().width / 2, 728);
         window.draw(text);
         window.display();
     }
