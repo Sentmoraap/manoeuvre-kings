@@ -144,13 +144,47 @@ int main(int argc, char **argv)
     levels.back().addWall(896, 384, 256, 768);
     levels.back().addWall(512, 64, 1024, 128);
     levels.back().addWall(512, 591, 1024, 354);
-
     levels.back().addVehicle(car, 512, 192, M_PI / 2);
     levels.back().addTarget(288, 384);
     levels.back().addVehicle(car, 320, 384, 0);
     levels.back().addTarget(736, 384);
     levels.back().addVehicle(car, 704, 384, M_PI);
     levels.back().addTarget(512, 160);
+
+    levels.push_back(Level("The pound"));
+    levels.back().addWall(226, 384, 452, 768);
+    levels.back().addWall(798, 384, 452, 768);
+    levels.back().addWall(512, 162, 1024, 324);
+    levels.back().addWall(512, 606, 1024, 324);
+    levels.back().addVehicle(car, 557, 424, M_PI);
+    levels.back().addTarget(552, 344);
+    levels.back().addVehicle(car, 482, 427, -M_PI / 2);
+    levels.back().addVehicle(car, 557, 384, M_PI);
+
+    levels.push_back(Level("Grid"));
+    levels.back().addWall(392, 264, 180, 180);
+    levels.back().addWall(632, 264, 180, 180);
+    levels.back().addWall(392, 504, 180, 180);
+    levels.back().addWall(632, 504, 180, 180);
+    levels.back().addWall(121, 384, 242, 768);
+    levels.back().addWall(903, 384, 242, 768);
+    levels.back().addWall(512, 57, 1024, 114);
+    levels.back().addWall(512, 711, 1024, 114);
+    levels.back().addVehicle(car, 272, 407, -M_PI / 2);
+    levels.back().addTarget(272, 204);
+    levels.back().addTarget(692, 144);
+    levels.back().addTarget(752, 564);
+    levels.back().addTarget(332, 624);
+    levels.back().addVehicle(car, 489, 144, 0);
+    levels.back().addTarget(272, 144);
+    levels.back().addTarget(752, 144);
+    levels.back().addTarget(752, 624);
+    levels.back().addTarget(272, 624);
+    levels.back().addVehicle(car, 752, 361, M_PI / 2);
+    levels.back().addTarget(332, 144);
+    levels.back().addTarget(752, 204);
+    levels.back().addTarget(692, 624);
+    levels.back().addTarget(272, 564);
 
     currentLevel = &levels[0];
     resetLevel();
