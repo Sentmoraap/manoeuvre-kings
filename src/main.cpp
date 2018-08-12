@@ -12,7 +12,7 @@ static constexpr uint16_t FRAME_RATE = 240;
 
 std::vector<Level> levels;
 Level* currentLevel;
-Vehicle currentVehicle;
+Vehicle currentVehicle(0, 0);
 uint32_t levelTime;
 uint16_t nbManoeuvres;
 uint8_t currentLevelNb = 0;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     font.loadFromFile("assets/sansation_regular.ttf");
     Sounds::loadSounds();
     uint64_t currentTime = clock.getElapsedTime().asMicroseconds() * FRAME_RATE;
-    Vehicle car;
+    Vehicle car(60, 7), limo(90, 7);
 
 
     // Levels
@@ -106,6 +106,34 @@ int main(int argc, char **argv)
     levels.back().addTarget(532, 299);
     levels.back().addTarget(594, 479);
     levels.back().addTarget(706, 479);
+
+    levels.push_back(Level("Enter the limousine"));
+    levels.back().addVehicle(limo, 92, 386, 0);
+    levels.back().addWall(512, 384, 240, 240);
+    levels.back().addWall(156, 172, 312, 344);
+    levels.back().addWall(156, 596, 312, 344);
+    levels.back().addWall(512, 144, 400, 80);
+    levels.back().addWall(238, 92, 477, 184);
+    levels.back().addWall(512, 676, 400, 184);
+    levels.back().addWall(32, 384, 64, 768);
+    levels.back().addWall(992, 384, 64, 768);
+    levels.back().addWall(868, 596, 312, 344);
+    levels.back().addWall(801, 224, 178, 240);
+    levels.back().addWall(512, 17, 1024, 34);
+    levels.back().addTarget(512, 224);
+    levels.back().addTarget(512, 544);
+    levels.back().addTarget(512, 69);
+
+    levels.push_back(Level("Parallel parking"));
+    levels.back().addVehicle(limo, 467, 576, -M_PI / 2);
+    levels.back().addWall(535, 169, 55, 328);
+    levels.back().addWall(512, 599, 10, 328);
+    levels.back().addWall(211, 384, 422, 768);
+    levels.back().addWall(793, 384, 462, 768);
+    levels.back().addWall(512, 64, 1024, 128);
+    levels.back().addWall(512, 704, 1024, 128);
+    levels.back().addTarget(540, 608);
+
 
     currentLevel = &levels[0];
     resetLevel();

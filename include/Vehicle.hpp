@@ -22,7 +22,7 @@ class Vehicle
 
         uint16_t width = 30;
         uint16_t length = 60;
-        uint16_t turnAxisPos = 30;//7;
+        uint16_t turnAxisPos = 7;
         double posX = 540;
         double posY = 390;
         double speed = 0;
@@ -45,7 +45,7 @@ class Vehicle
         sf::Sound targetSound;
 
     public:
-        Vehicle();
+        Vehicle(uint16_t length, uint16_t turnAxisPos);
         Vehicle(const Vehicle &) = default;
         Vehicle(Vehicle &&) = default;
         Vehicle& operator=(const Vehicle &) = default;

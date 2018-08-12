@@ -3,7 +3,7 @@
 #include "Utils.hpp"
 #include "Sounds.hpp"
 
-Vehicle::Vehicle()
+Vehicle::Vehicle(uint16_t length, uint16_t turnAxisPos) : length(length), turnAxisPos(turnAxisPos)
 {
     engineSound.setBuffer(Sounds::engineSound);
     engineSound.setLoop(true);
