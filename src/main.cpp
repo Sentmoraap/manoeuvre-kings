@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Level.hpp"
 #include "Vehicle.hpp"
+#include "Sounds.hpp"
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <sstream>
@@ -20,6 +21,7 @@ bool counting = false;
 void resetLevel()
 {
     currentVehicle = currentLevel->getVehicles()[0];
+    currentVehicle.setPlaySounds(true);
     levelTime = 0;
     nbManoeuvres = 0;
     currentSpeedSign = 0;
@@ -41,6 +43,7 @@ int main(int argc, char **argv)
     sf::Clock clock;
     sf::Font font;
     font.loadFromFile("assets/sansation_regular.ttf");
+    Sounds::loadSounds();
     uint64_t currentTime = clock.getElapsedTime().asMicroseconds() * FRAME_RATE;
     levels.push_back(Level());
     Vehicle car;

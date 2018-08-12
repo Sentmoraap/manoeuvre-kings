@@ -1,6 +1,15 @@
 #include "Vehicle.hpp"
 #include "Level.hpp"
 #include "Utils.hpp"
+#include "Sounds.hpp"
+
+Vehicle::Vehicle()
+{
+    engineSound.setBuffer(Sounds::engineSound);
+    engineSound.setLoop(true);
+    hitSound.setBuffer(Sounds::hitSound);
+    targetSound.setBuffer(Sounds::targetSound);
+}
 
 void Vehicle::setPosAndAngle(double posX, double posY, float angle)
 {
@@ -49,7 +58,13 @@ void Vehicle::update(double dt, const Level &level)
     double newPosY = posY + speed * dt * dx.y;
     if(level.checkSat(sf::FloatRect(sf::Vector2f(newPosX, newPosY), sf::Vector2f(length, width)),
         sf::Vector2f(turnAxisPos, width / 2), newAngle))
-            speed = 0;
+    {
+        if(playSounds && fabs(speed) > minSpeedHitSound && hitSound.getStatus() != sf::SoundSource::Status::Playing)
+        {
+            hitSound.play();
+        }
+        speed = 0;
+    }
     else
     {
         angle = newAngle;
@@ -82,12 +97,17 @@ void Vehicle::update(double dt, const Level &level)
             }
             if(col)
             {
+                if(playSounds) targetSound.play();
                 std::swap(target, targets.back());
                 targets.pop_back();
                 i--;
             }
         }
     }
+    float pitch = std::min(maxPitch, std::max(minPitch, static_cast<float>(fabs(speed) * speedPitchMult)));
+    engineSound.setPitch(pitch);
+    float volume = std::min(maxVolume, std::max(minVolume, static_cast<float>(fabs(speed) * speedVolumeMult)));
+    engineSound.setVolume(volume);
 }
 
 int8_t Vehicle::getSpeedSign() const
@@ -121,5 +141,18 @@ void Vehicle::drawTargets(sf::RenderWindow &window) const
     {
         circle.setPosition(target.posX, target.posY);
         window.draw(circle);
+    }
+}
+
+void Vehicle::setPlaySounds(bool playSounds)
+{
+    this->playSounds = playSounds;
+    if(playSounds)
+    {
+        engineSound.play();
+    }
+    else
+    {
+        engineSound.stop();
     }
 }
